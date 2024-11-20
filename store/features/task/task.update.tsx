@@ -20,31 +20,34 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/hooks/use-toast';
-import { useUpdateUserMutation } from './user.api-slice';
-import { UserType } from './user.interface';
+import { useUpdateTaskMutation } from './task.api-slice';
+import { TaskType } from './task.interface';
+import { Textarea } from '@/components/ui/textarea';
+
 const FormSchema = z.object({
-	username: z
+	title: z.string().min(2, { message: 'Title must be at least 2 characters.' }),
+	description: z
 		.string()
-		.min(2, { message: 'Username must be at least 2 characters.' }),
+		.min(2, { message: 'Description must be at least 2 characters.' }),
 });
-export function UpdateUser({
-	user,
+export function UpdateTask({
+	task,
 	open,
 	setOpen,
 }: {
-	user: UserType;
+	task: TaskType;
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
 	// Login
-	const [login, { isLoading: loginLoading }] = useUpdateUserMutation();
+	const [login, { isLoading: loginLoading }] = useUpdateTaskMutation();
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
-		defaultValues: { username: user.username },
+		defaultValues: { title: task.title, description: task.description },
 	});
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		try {
-			const response = await login({ ...data, id: user.id }).unwrap();
+			const response = await login({ ...data, id: task.id }).unwrap();
 			if (response) {
 				toast({
 					title: 'Success',
@@ -63,23 +66,34 @@ export function UpdateUser({
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Create New User</DialogTitle>
-					<DialogDescription>
-						Create New User and use it to login
-					</DialogDescription>
+					<DialogTitle>Update Task</DialogTitle>
+					<DialogDescription>Update task {task.title}</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
-							name="username"
+							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel htmlFor="login-username">Username</FormLabel>
+									<FormLabel htmlFor="title">Title</FormLabel>
 									<FormControl>
-										<Input
-											id="login-username"
-											placeholder="Username"
+										<Input id="title" placeholder="Title" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="description">Description</FormLabel>
+									<FormControl>
+										<Textarea
+											id="description"
+											placeholder="description"
 											{...field}
 										/>
 									</FormControl>

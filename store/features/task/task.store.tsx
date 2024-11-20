@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { useStoreTaskMutation } from './task.api-slice';
+import { Textarea } from '@/components/ui/textarea';
 const FormSchema = z.object({
 	title: z.string().min(2, { message: 'Title must be at least 2 characters.' }),
 	description: z
@@ -48,6 +49,7 @@ export function CreateTask() {
 					description: 'Success user created',
 				});
 				setOpen(false);
+				form.reset();
 			}
 		} catch ({ data }) {
 			toast({
@@ -64,9 +66,7 @@ export function CreateTask() {
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Create New Task</DialogTitle>
-					<DialogDescription>
-						Create New User and use it to login
-					</DialogDescription>
+					<DialogDescription>Create New Task</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -75,13 +75,9 @@ export function CreateTask() {
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel htmlFor="login-username">Username</FormLabel>
+									<FormLabel htmlFor="title">Title</FormLabel>
 									<FormControl>
-										<Input
-											id="login-username"
-											placeholder="Username"
-											{...field}
-										/>
+										<Input id="title" placeholder="Title" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -92,11 +88,11 @@ export function CreateTask() {
 							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel htmlFor="login-password">Password</FormLabel>
+									<FormLabel htmlFor="description">Description</FormLabel>
 									<FormControl>
-										<Input
-											id="login-password"
-											placeholder="Password"
+										<Textarea
+											id="description"
+											placeholder="description"
 											{...field}
 										/>
 									</FormControl>

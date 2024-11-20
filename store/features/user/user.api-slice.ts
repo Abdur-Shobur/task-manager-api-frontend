@@ -17,6 +17,15 @@ export const api = apiSlice.injectEndpoints({
 			invalidatesTags: ['Users'],
 		}),
 
+		updateUser: builder.mutation<UserType, { id: string }>({
+			query: (payload) => ({
+				url: `users/${payload.id}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: ['Users'],
+		}),
+
 		deleteUser: builder.mutation<UserType, string>({
 			query: (id) => ({
 				url: `users/${id}`,
@@ -27,5 +36,9 @@ export const api = apiSlice.injectEndpoints({
 	}),
 });
 
-export const { useUsersQuery, useStoreUserMutation, useDeleteUserMutation } =
-	api;
+export const {
+	useUsersQuery,
+	useStoreUserMutation,
+	useDeleteUserMutation,
+	useUpdateUserMutation,
+} = api;
